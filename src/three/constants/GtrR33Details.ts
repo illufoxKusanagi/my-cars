@@ -7,7 +7,8 @@ texture.colorSpace = THREE.SRGBColorSpace;
 export const gtrR33MaterialDetails = {
   // Predefined Realistic Materials
   paintMaterial: new THREE.MeshPhysicalMaterial({
-    color: 0x280137, // Midnight Purple (Skyline aesthetic)
+    // color: 0x280137, // Midnight Purple (Skyline aesthetic)
+    color: 0x1b4e95, // Midnight Purple (Skyline aesthetic)
     // color: 0xffffff,
     roughness: 0.12,
     metalness: 0.9,
@@ -16,15 +17,16 @@ export const gtrR33MaterialDetails = {
   }),
 
   windowGlassMaterial: new THREE.MeshPhysicalMaterial({
-    color: 0x0c100e,
+    color: 0x1d1d1f,
     transparent: true,
-    opacity: 0.3,
+    opacity: 0.9,
     roughness: 0.05,
     metalness: 0.1,
     transmission: 0.95,
     ior: 1.52,
-    thickness: 0.5,
+    thickness: 0.0, // Set to 0 to prevent volume overlap / Z-fighting artifacts on 2-sided models
     depthWrite: false,
+    side: THREE.FrontSide, // Crucial: Only render the front faces to stop Z-fighting on Forza double-sided glass
   }),
 
   hoodMaterial: new THREE.MeshPhysicalMaterial({
@@ -39,17 +41,49 @@ export const gtrR33MaterialDetails = {
     color: 0xffffff,
     // emissive: 0xffffff,
     // emissiveIntensity: 3.5, // Emissive high enough to trigger the 0.85 bloom threshold
-    transparent: true,
-    opacity: 0.25,
+    // transparent: true,
+    opacity: 0.1,
     roughness: 0.02,
     metalness: 0.1,
-    transmission: 0.98,
-    ior: 1.5,
+    depthWrite: false,
+  }),
+
+  headlightHousingMaterial: new THREE.MeshPhysicalMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.6,
+    roughness: 0.2,
+    metalness: 0.1,
+    emissive: 0xffffff,
+    emissiveIntensity: 2.0,
+    // transmission (0.0 to 1.0): Instead of making the object invisible, this tells the engine to let light actually travel through the solid object. 1.0 means it's fully transmissive glass.
+    // ior (Index of Refraction): This controls how much the light bends as it goes through the material. Air is 1.0. Water is 1.33. Real glass is exactly 1.5. Diamond is 2.4. This gives you that realistic, distorted look when you look through curved glass!
+    // thickness: Tells the engine how thick the glass volume is (in meters). Thicker glass causes light to bend more and creates more internal reflections (like a thick headlight cover or a crystal ball).
+    // transmission: 0.85,
+    // ior: 1.5,
     thickness: 0.2,
     depthWrite: false,
   }),
 
+  tailightHousingMaterial: new THREE.MeshPhysicalMaterial({
+    color: 0xdb0000,
+    roughness: 0.2,
+    metalness: 0.1,
+  }),
+
   taillightGlassMaterial: new THREE.MeshPhysicalMaterial({
+    color: 0xdb0000,
+    transparent: true,
+    opacity: 0.01,
+    roughness: 0.2,
+    metalness: 0.1,
+    emissive: 0xc70000,
+    emissiveIntensity: 5.0,
+    thickness: 0.2,
+    depthWrite: false,
+  }),
+
+  taillightMaterial: new THREE.MeshPhysicalMaterial({
     color: 0xc70000,
     // emissive: 0xff0000,
     // emissiveIntensity: 3.0, // Glowing red taillights
@@ -64,7 +98,7 @@ export const gtrR33MaterialDetails = {
     // thickness: Tells the engine how thick the glass volume is (in meters). Thicker glass causes light to bend more and creates more internal reflections (like a thick headlight cover or a crystal ball).
     // transmission: 0.85,
     // ior: 1.5,
-    // thickness: 0.2,
+    thickness: 0.2,
     depthWrite: false,
   }),
 
@@ -75,7 +109,7 @@ export const gtrR33MaterialDetails = {
   }),
 
   rimMaterial: new THREE.MeshStandardMaterial({
-    color: 0x634f0c,
+    color: 0xe3ecff,
     roughness: 0.2,
     metalness: 0.85,
   }),
@@ -134,9 +168,11 @@ export const gtrR33MaterialDetails = {
   }),
 
   turnSignal: new THREE.MeshStandardMaterial({
-    color: 0xd48f04,
-    opacity: 0.4,
-    roughness: 0.4,
-    metalness: 0.7,
+    color: 0xf26900,
+    transparent: true,
+    opacity: 0.1,
+    roughness: 0.02,
+    metalness: 0.1,
+    depthWrite: false,
   }),
 };

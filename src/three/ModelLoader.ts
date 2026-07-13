@@ -5,32 +5,49 @@ import { animationHandler } from './AnimationHandler';
 
 export const carState = {
   leftDoor: null as THREE.Object3D | null,
+  currentModel: null as THREE.Group | null,
 };
 
-export function modelLoader(scene: THREE.Scene) {
+export function modelLoader(scene: THREE.Scene, modelPath: string = '/models/Skyline-GTR-R33.glb') {
   const loader = new GLTFLoader();
   const modelMaterial = gtrR33MaterialDetails;
 
+  if (carState.currentModel) {
+    // CRITICAL MEMORY LEAK FIX: In ThreeJS, removing an object from the scene 
+    // DOES NOT remove its geometry/textures from your graphics card memory!
+    // We must manually dispose them before deleting the car.
+    carState.currentModel.traverse((child: any) => {
+      if (child instanceof THREE.Mesh) {
+        child.geometry.dispose();
+        // Note: We are reusing the exact same materials from gtrR33MaterialDetails, 
+        // so we DO NOT dispose materials here, or the next car will be invisible!
+      }
+    });
+
+    scene.remove(carState.currentModel);
+    carState.currentModel = null;
+  }
+
   loader.load(
-    // '/models/New-R33.glb',
-    // '/models/nsx-na2.glb',
-    // 'models/R33-LM.glb',
-    // 'models/R34.glb',
-    // '/models/Newest-gtr.glb',
-    '/models/Final-gtr.-r33.glb',
+    modelPath,
     function (gltf) {
+      carState.currentModel = gltf.scene;
       gltf.scene.traverse((child: any) => {
         const name = child.name.toLowerCase();
-
+        //
         if (child instanceof THREE.Mesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
+          // Prevent glass from casting/receiving shadows (fixes self-shadowing artifacts)
+          const isGlass =
+            name.includes('glass') ||
+            name.includes('window') ||
+            name.includes('windshield');
+          child.castShadow = !isGlass;
+          child.receiveShadow = !isGlass;
 
           if (child.geometry.attributes.color) {
             child.geometry.deleteAttribute('color');
           }
 
-          const name = child.name.toLowerCase();
           // const matName = (child.material?.name || '').toLowerCase();
 
           // 1. Tires
@@ -39,6 +56,7 @@ export function modelLoader(scene: THREE.Scene) {
           }
           // 16. Hood texture
           else if (name.includes('hood') && name.includes('carpaint')) {
+            // else if (name.includes('hood') && name.includes('carbonfiber')) {
             child.material = modelMaterial.hoodMaterial;
           }
           // 2. Windows / Windshield
@@ -60,14 +78,38 @@ export function modelLoader(scene: THREE.Scene) {
           ) {
             child.material = modelMaterial.headlightGlassMaterial;
           }
+          // 3. Headlight Housing
+          else if (
+            (name.includes('headlight') && name.includes('chrome')) ||
+            (name.includes('headlight') && name.includes('satin')) ||
+            (name.includes('headlight') &&
+              name.includes('lights') &&
+              name.includes('smooth'))
+          ) {
+            child.material = modelMaterial.headlightHousingMaterial;
+          }
           // 4. Taillights
           else if (
             name.includes('taillight') &&
-            name.includes('chrome') &&
-            name.includes('ridges')
+            name.includes('light') &&
+            name.includes('smooth')
+            // ||
+            // (name.includes('taillight') && name.includes('ch'))
+          ) {
+            // else if (name.includes('glassltl') || name.includes('glassrtl') || name.includes('taillight') || name.includes('lensltl') || name.includes('lensrtl')) {
+            child.material = modelMaterial.taillightMaterial;
+          }
+          // 4. Taillight glass
+          else if (
+            (name.includes('gls') && name.includes('tl')) ||
+            (name.includes('glass') && name.includes('chmsl'))
           ) {
             // else if (name.includes('glassltl') || name.includes('glassrtl') || name.includes('taillight') || name.includes('lensltl') || name.includes('lensrtl')) {
             child.material = modelMaterial.taillightGlassMaterial;
+          }
+          // 4. Taillight Housing
+          else if (name.includes('taillight') && name.includes('chrome')) {
+            child.material = modelMaterial.tailightHousingMaterial;
           }
           // 5. Wheels / Rims
           else if (
@@ -168,13 +210,13 @@ export function modelLoader(scene: THREE.Scene) {
             child.material = modelMaterial.headlightHidMaterial;
           }
           // 14. Fallback
-          else {
-            // if (matName.includes('paint') || matName.includes('body')) {
-            child.material = modelMaterial.paintMaterial;
-            // } else {
-            //   child.material = darkPlasticMaterial;
-            // }
-          }
+          // else {
+          //   // if (matName.includes('paint') || matName.includes('body')) {
+          //   child.material = modelMaterial.paintMaterial;
+          //   // } else {
+          //   //   child.material = darkPlasticMaterial;
+          //   // }
+          // }
         }
       });
 

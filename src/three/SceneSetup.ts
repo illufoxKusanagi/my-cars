@@ -15,7 +15,7 @@ export function setupScene(canvasRef: HTMLCanvasElement) {
   camera.lookAt(0, 0, 0);
 
   const controls = new OrbitControls(camera, canvasRef);
-  controls.target.set(0, 0, 0);
+  controls.target.set(0, 1, 0);
   controls.update();
 
   const gridHelper = new THREE.GridHelper(24, 24, 0x555555, 0x444444);
