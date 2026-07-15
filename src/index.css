@@ -110,3 +110,41 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* ── Loading Screen: GIF Mask Reveal ── */
+.canvas-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.canvas-revealing {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  mask: url('/toyota-yaris-bouncing-car.gif') center / 0 no-repeat;
+  -webkit-mask: url('/toyota-yaris-bouncing-car.gif') center / 0 no-repeat;
+  animation: mask-reveal 1.0s ease-in-out both;
+}
+
+@keyframes mask-reveal {
+  0% {
+    mask-size: 0;
+    -webkit-mask-size: 0;
+  }
+
+  10% {
+    mask-size: 15vmax;
+    -webkit-mask-size: 15vmax;
+  }
+
+  85% {
+    mask-size: 15vmax;
+    -webkit-mask-size: 15vmax;
+  }
+
+  100% {
+    mask-size: 750vmax;
+    -webkit-mask-size: 750vmax;
+  }
+}

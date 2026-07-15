@@ -14,6 +14,8 @@ import { gtrR33MaterialDetails } from './three/constants/GtrR33Details';
 export default function App() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRevealing, setIsRevealing] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(true);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -26,6 +28,7 @@ export default function App() {
 
     const handleLoadComplete = () => {
       setIsLoading(false);
+      setIsRevealing(true);
     };
 
     modelLoader(scene, '/models/Skyline-GTR-R33.glb', handleLoadComplete);
@@ -76,9 +79,9 @@ export default function App() {
     const renderTarget = new THREE.WebGLRenderTarget(
       window.innerWidth,
       window.innerHeight,
-      { 
+      {
         type: THREE.HalfFloatType,
-        samples: 4 // CRITICAL: This enables MSAA (Multi-Sample Anti-Aliasing) inside the EffectComposer!
+        samples: 4, // CRITICAL: This enables MSAA (Multi-Sample Anti-Aliasing) inside the EffectComposer!
       }
     );
 
@@ -114,6 +117,34 @@ export default function App() {
       stats.end();
     });
 
+    // Historic Nissan Factory Colors
+    const factoryColors = {
+      'KH2: Gun Grey Metallic': '#4a4d4f',
+      '326: Crystal White': '#f8f9fa',
+      '732: Black Pearl Metallic': '#1a1a1c',
+      'KL0: Spark Silver Metallic': '#b0b3b5',
+      'AH3: Red Pearl Metallic': '#8b1c24',
+      'TH1: Dark Blue Pearl': '#18223c',
+      'KG1: Jet Silver Metallic': '#9ea1a3',
+      'BL0: Greyish Blue Pearl': '#3a4a58',
+      'LP2: Midnight Purple': '#3a1f4a',
+      'BN6: Deep Marine Blue': '#1b4e95',
+      'BT2: Champion Blue / Le Mans': '#254b87',
+      'QM1: White': '#fdfdfd',
+      'KH3: Black': '#0a0a0c',
+      'KR4: Sonic Silver': '#898c8f',
+      'KN6: Dark Grey Pearl': '#3b3c3e',
+      'AR2: Active Red': '#ba1f24',
+      'TV2: Bayside Blue': '#14428b',
+      'JW0: Millennium Jade': '#5c6356',
+      'LV4: Midnight Purple II': '#3a2a4b',
+      'LX0: Midnight Purple III': '#3d214f',
+      'EY0: Silica Brass': '#7c7760',
+      'EV1: Lightning Yellow': '#e8b717',
+      'GV1: Black Pearl': '#111112',
+      'KV2: Athlete Silver': '#a8a9ad',
+    };
+
     // 1. Create an object holding the functions you want to trigger
     const carActions = {
       openDoor: () => {
@@ -126,7 +157,7 @@ export default function App() {
           carState.leftDoor.rotation.y = 0; // Rotates the door back to closed!
         }
       },
-      paintColor: gtrR33MaterialDetails.paintMaterial.color.getHex(),
+      paintColor: '#280137',
       model: '/models/Skyline-GTR-R33.glb',
       environment: 'city',
     };
@@ -134,10 +165,10 @@ export default function App() {
     // 2. Add a new folder to the GUI
     const customizerFolder = gui.addFolder('Car Customizer');
     customizerFolder
-      .addColor(carActions, 'paintColor')
-      .name('Paint Color')
-      .onChange((val: number) => {
-        gtrR33MaterialDetails.paintMaterial.color.setHex(val);
+      .add(carActions, 'paintColor', factoryColors)
+      .name('Factory Paint')
+      .onChange((val: string) => {
+        gtrR33MaterialDetails.paintMaterial.color.set(val);
       });
     customizerFolder
       .add(carActions, 'model', {
@@ -149,7 +180,9 @@ export default function App() {
       })
       .name('Car Model')
       .onChange((val: string) => {
+        setShowOverlay(true);
         setIsLoading(true);
+        setIsRevealing(false);
         modelLoader(scene, val, handleLoadComplete);
       });
     customizerFolder
@@ -174,10 +207,11 @@ export default function App() {
 
   return (
     <>
-      {isLoading && (
+      {/* Black background layer - visible through non-masked areas during reveal */}
+      {showOverlay && (
         <div
           style={{
-            position: 'absolute',
+            position: 'fixed',
             top: 0,
             left: 0,
             width: '100vw',
@@ -192,17 +226,28 @@ export default function App() {
             fontFamily: 'sans-serif',
           }}
         >
-          <img
-            src="/drifting-car.gif"
-            alt="Loading..."
-            // style={{ width: '150px', marginBottom: '20px' }}
-          />
-          <h2 style={{ letterSpacing: '2px', fontWeight: 'bold' }}>
-            LOADING MODEL...
-          </h2>
+          {isLoading && (
+            <>
+              <img
+                src="/toyota-yaris-bouncing-car.gif"
+                alt="Loading..."
+                style={{ width: '200px', marginBottom: '20px' }}
+              />
+              <h2 style={{ letterSpacing: '2px', fontWeight: 'bold' }}>
+                LOADING MODEL...
+              </h2>
+            </>
+          )}
         </div>
       )}
-      <div className="canvas-container">
+      {/* Canvas: during reveal, gets the GIF mask that grows to unveil the 3D scene */}
+      <div
+        className={`canvas-container${isRevealing ? ' canvas-revealing' : ''}`}
+        onAnimationEnd={() => {
+          setIsRevealing(false);
+          setShowOverlay(false);
+        }}
+      >
         <canvas ref={canvasRef} />
       </div>
     </>

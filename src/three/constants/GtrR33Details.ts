@@ -7,11 +7,12 @@ texture.colorSpace = THREE.SRGBColorSpace;
 export const gtrR33MaterialDetails = {
   // Predefined Realistic Materials
   paintMaterial: new THREE.MeshPhysicalMaterial({
-    // color: 0x280137, // Midnight Purple (Skyline aesthetic)
-    color: 0x1b4e95, // Midnight Purple (Skyline aesthetic)
-    // color: 0xffffff,
-    roughness: 0.12,
-    metalness: 0.9,
+    color: 0x280137, // Midnight Purple
+    // color: 0x575857, // Dark Gray Pearls
+    // color: 0xf8fffd, // Crystal White
+    // color: 0x1b4e95, // Deep Marine Blue
+    roughness: 0.02,
+    metalness: 0.7,
     clearcoat: 1.0,
     clearcoatRoughness: 0.03,
   }),
