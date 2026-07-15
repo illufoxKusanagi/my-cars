@@ -8,7 +8,11 @@ export const carState = {
   currentModel: null as THREE.Group | null,
 };
 
-export function modelLoader(scene: THREE.Scene, modelPath: string = '/models/Skyline-GTR-R33.glb') {
+export function modelLoader(
+  scene: THREE.Scene, 
+  modelPath: string = '/models/Skyline-GTR-R33.glb',
+  onLoadComplete?: () => void
+) {
   const loader = new GLTFLoader();
   const modelMaterial = gtrR33MaterialDetails;
 
@@ -244,6 +248,8 @@ export function modelLoader(scene: THREE.Scene, modelPath: string = '/models/Sky
 
       // Initialize animations!
       animationHandler.init(loadedModel, gltf.animations);
+      
+      onLoadComplete?.();
     },
     undefined,
     function (error) {

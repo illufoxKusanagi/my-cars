@@ -78,7 +78,7 @@ export const gtrR33MaterialDetails = {
     roughness: 0.2,
     metalness: 0.1,
     emissive: 0xc70000,
-    emissiveIntensity: 5.0,
+    emissiveIntensity: 25.0, // Cranked up past 10.0 so it triggers the new Bloom Threshold
     thickness: 0.2,
     depthWrite: false,
   }),
@@ -92,7 +92,7 @@ export const gtrR33MaterialDetails = {
     roughness: 0.2,
     metalness: 0.1,
     emissive: 0xc70000,
-    emissiveIntensity: 5.0,
+    emissiveIntensity: 25.0, // Cranked up past 10.0 so it triggers the new Bloom Threshold
     // transmission (0.0 to 1.0): Instead of making the object invisible, this tells the engine to let light actually travel through the solid object. 1.0 means it's fully transmissive glass.
     // ior (Index of Refraction): This controls how much the light bends as it goes through the material. Air is 1.0. Water is 1.33. Real glass is exactly 1.5. Diamond is 2.4. This gives you that realistic, distorted look when you look through curved glass!
     // thickness: Tells the engine how thick the glass volume is (in meters). Thicker glass causes light to bend more and creates more internal reflections (like a thick headlight cover or a crystal ball).
@@ -143,8 +143,8 @@ export const gtrR33MaterialDetails = {
     // color: 0xe3f5ff,
     roughness: 0.5,
     metalness: 0.4,
-    // emissive: 0xffffff,
-    // emissiveIntensity: 10.0,
+    emissive: 0xffffff,
+    emissiveIntensity: 25.0, // High intensity to trigger Bloom Threshold
   }),
 
   headlightChromeMaterial: new THREE.MeshStandardMaterial({
