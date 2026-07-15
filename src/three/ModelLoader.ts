@@ -9,7 +9,7 @@ export const carState = {
 };
 
 export function modelLoader(
-  scene: THREE.Scene, 
+  scene: THREE.Scene,
   modelPath: string = '/models/Skyline-GTR-R33.glb',
   onLoadComplete?: () => void
 ) {
@@ -17,13 +17,13 @@ export function modelLoader(
   const modelMaterial = gtrR33MaterialDetails;
 
   if (carState.currentModel) {
-    // CRITICAL MEMORY LEAK FIX: In ThreeJS, removing an object from the scene 
+    // CRITICAL MEMORY LEAK FIX: In ThreeJS, removing an object from the scene
     // DOES NOT remove its geometry/textures from your graphics card memory!
     // We must manually dispose them before deleting the car.
     carState.currentModel.traverse((child: any) => {
       if (child instanceof THREE.Mesh) {
         child.geometry.dispose();
-        // Note: We are reusing the exact same materials from gtrR33MaterialDetails, 
+        // Note: We are reusing the exact same materials from gtrR33MaterialDetails,
         // so we DO NOT dispose materials here, or the next car will be invisible!
       }
     });
@@ -248,7 +248,7 @@ export function modelLoader(
 
       // Initialize animations!
       animationHandler.init(loadedModel, gltf.animations);
-      
+
       onLoadComplete?.();
     },
     undefined,

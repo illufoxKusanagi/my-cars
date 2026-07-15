@@ -7,8 +7,6 @@ import GUI from 'lil-gui';
 import { animationHandler } from './three/AnimationHandler';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import Stats from 'three/addons/libs/stats.module.js';
 import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
 import { gtrR33MaterialDetails } from './three/constants/GtrR33Details';
