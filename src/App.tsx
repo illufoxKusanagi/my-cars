@@ -72,11 +72,14 @@ export default function App() {
     // Load default
     loadEnvironment('sunset');
 
-    // 1. Create an HDR Render Target
+    // 1. Create an HDR Render Target with Anti-Aliasing
     const renderTarget = new THREE.WebGLRenderTarget(
       window.innerWidth,
       window.innerHeight,
-      { type: THREE.HalfFloatType }
+      { 
+        type: THREE.HalfFloatType,
+        samples: 4 // CRITICAL: This enables MSAA (Multi-Sample Anti-Aliasing) inside the EffectComposer!
+      }
     );
 
     // 2. Pass it into your composer
